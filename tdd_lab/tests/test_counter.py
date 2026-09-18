@@ -81,3 +81,14 @@ class TestCounterEndpoints:
         """It should not delete a counter that doesn't exist"""
         result = client.delete('/counters/missing')
         assert result.status_code == status.HTTP_404_NOT_FOUND
+    # ===========================
+    # Test: Return 404 for non-existent counter
+    # Author: Justin Spence
+    # Date: 2026-09-18
+    # Description: Ensure that attempting to retrieve a non existing counter returns 404
+    # ===========================
+    def test_get_non_existent_counter(self, client):
+        """It should return 404 for a non-existent counter"""
+        result = client.get('/counters/InvalidCounter')
+        assert result.status_code == status.HTTP_404_NOT_FOUND
+    
