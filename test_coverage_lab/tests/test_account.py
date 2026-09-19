@@ -268,6 +268,24 @@ def test_account_password_hashing():
 # - Ensure accounts can be deactivated and reactivated correctly.
 # Target Methods: deactivate() / reactivate()
 
+# ===========================
+# Test: Test account deactivation/reactivation
+# Author: Justin Spence
+# Date: 2025-09-18
+# Description: Ensure accounts can be deactivated and reactivated correctly.
+# ===========================
+def test_account_deactivation_and_reactivation():
+    """Test that account deactivate() and reactivate() function correctly"""
+    account = Account(name="John Doe", email="johndoe@example.com", role="user")
+
+    # deactivate account and verify
+    account.deactivate()
+    assert account.disabled == True
+
+    # Reactivates account and verify
+    account.reactivate()
+    assert account.disabled == False
+
 # Student 10: Test email uniqueness enforcement
 # - Ensure duplicate emails are not allowed.
 # Target Method: validate_unique_email()
