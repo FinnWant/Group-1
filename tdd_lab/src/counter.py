@@ -17,6 +17,9 @@ def create_counter(name):
     """Create a counter"""
     if counter_exists(name):
         return jsonify({"error": f"Counter {name} already exists"}), status.HTTP_409_CONFLICT
+    """Check if counter is non-alphanumeric"""
+    if not name.isalnum():
+        return jsonify({"error": f"Invalid counter name: {name}"}), status.HTTP_400_BAD_REQUEST
     COUNTERS[name] = 0
     return jsonify({name: COUNTERS[name]}), status.HTTP_201_CREATED
 
@@ -46,3 +49,7 @@ def get_counter(name):
     if not counter_exists(name):
         return jsonify({"error": f"Counter {name} does not exist"}), status.HTTP_404_NOT_FOUND
     
+@app.errorhandler(status.HTTP_405_METHOD_NOT_ALLOWED)
+def handle_method_not_allowed(error):
+    """Return a JSON error body for unsupported HTTP methods"""
+    return jsonify({"error": "Method Not Allowed"}), status.HTTP_405_METHOD_NOT_ALLOWED

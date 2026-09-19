@@ -124,6 +124,27 @@ def test_invalid_email_format():
 #   never raises. Call the validation method on the constructed object.
 # Target Method: validate_required_fields()
 
+# ===========================
+# Test: Missing Required Fields
+# Author: Daniela Lopez
+# Date: 2026-09-10
+# Description: Ensure validate_required_fields() raises DataValidationError when required fields are missing.
+# ===========================
+
+def test_missing_name_raises_error():
+    """Test that a missing name raises DataValidationError"""
+    account = Account(name="", email="johndoe@example.com")
+
+    with pytest.raises(DataValidationError):
+        account.validate_required_fields()
+
+def test_missing_email_raises_error():
+    """Test that a missing email raises DataValidationError"""
+    account = Account(name="John Doe", email="")
+
+    with pytest.raises(DataValidationError):
+        account.validate_required_fields()
+
 # Student 4: Test positive deposit
 # - Verify that depositing a positive amount correctly increases the balance.
 # Target Method: deposit()
@@ -247,6 +268,24 @@ def test_account_password_hashing():
 # - Ensure accounts can be deactivated and reactivated correctly.
 # Target Methods: deactivate() / reactivate()
 
+# ===========================
+# Test: Test account deactivation/reactivation
+# Author: Justin Spence
+# Date: 2025-09-18
+# Description: Ensure accounts can be deactivated and reactivated correctly.
+# ===========================
+def test_account_deactivation_and_reactivation():
+    """Test that account deactivate() and reactivate() function correctly"""
+    account = Account(name="John Doe", email="johndoe@example.com", role="user")
+
+    # deactivate account and verify
+    account.deactivate()
+    assert account.disabled == True
+
+    # Reactivates account and verify
+    account.reactivate()
+    assert account.disabled == False
+
 # Student 10: Test email uniqueness enforcement
 # - Ensure duplicate emails are not allowed.
 # Target Method: validate_unique_email()
@@ -254,3 +293,25 @@ def test_account_password_hashing():
 # Student 11: Test deleting an account
 # - Verify that an account can be successfully deleted from the database.
 # Target Method: delete()
+
+# ===========================
+# Test: Delete Account
+# Author: Alex Cheda
+# Date: 2026-09-17
+# Description: Ensure that calling delete() removes the account from the
+#   database, so it can no longer be found by a subsequent query.
+# Issue: Add a test for deleting an account
+# ===========================
+
+def test_delete_account(setup_account):
+    """Test that deleting an account removes it from the database"""
+    account_id = setup_account.id
+
+    # Sanity check: the account exists before deletion
+    assert db.session.get(Account, account_id) is not None
+
+    # Delete the account
+    setup_account.delete()
+
+    # The account should no longer be found in the database
+    assert db.session.get(Account, account_id) is None

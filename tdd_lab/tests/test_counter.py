@@ -28,7 +28,6 @@ class TestCounterEndpoints:
         result = client.post('/counters/foo')
         assert result.status_code == status.HTTP_201_CREATED
 
-
     # ===========================
     # Test: List All Counters
     # Author: Barron McCarthy
@@ -92,3 +91,29 @@ class TestCounterEndpoints:
         result = client.get('/counters/InvalidCounter')
         assert result.status_code == status.HTTP_404_NOT_FOUND
     
+
+    # ===========================
+    # Test: Handle invalid HTTP methods
+    # Author: Alex Cheda
+    # Date: 2026-09-17
+    # Description: Ensure that calling a counter endpoint with an
+    #   unsupported HTTP method returns 405 Method Not Allowed instead
+    #   of crashing or being silently misrouted.
+    # ===========================
+    def test_invalid_method_on_counter(self, client):
+        """It should return 405 with a JSON error body when using an unsupported method"""
+        client.post('/counters/baz')
+        result = client.put('/counters/baz')
+        assert result.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+        assert result.get_json() is not None
+        assert "error" in result.get_json()
+    # ===========================
+    # Test: Invalid counter names
+    # Author: Tyler Vu
+    # Date: 2026-09-16
+    # Description: Ensure non-alphanumeric coutner names don't pass
+    # ===========================
+    def test_create_invalid_counter_name(self, client):
+        """It should not create a counter with a non-alphanumeric name"""
+        result = client.post('/counters/foo!@#$%')
+        assert result.status_code == status.HTTP_400_BAD_REQUEST
